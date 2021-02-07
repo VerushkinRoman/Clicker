@@ -17,13 +17,15 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.InputEvent;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.logging.*;
 
 public class Clicker implements ClickerWindowListener, NativeKeyListener, NativeMouseMotionListener {
 
     private static final int REFRESH_DELAY = 300;
     private static final int DRUG_DELAY = 150;
-    private static final Logger logger = Logger.getLogger("");
+    private static final Logger commonLogger = Logger.getLogger(Clicker.class.getName());
     private final MainWindow window;
     private final ScriptForClicker script;
     private final Clipboard clipboard;
@@ -43,26 +45,45 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     private boolean isChangeStartBtn = false;
     private boolean isChangeStopBtn = false;
 
-    public Clicker(ScriptForClicker script) throws AWTException, IOException {
+    public Clicker(ScriptForClicker script) throws AWTException {
         scriptThread = new Thread((Runnable) script);
         refreshColorData = new Thread(new RefreshColorData());
         robot = new Robot();
-        registerHook();
         Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
         logger.setLevel(Level.OFF);
         logger.setUseParentHandlers(false);
+        registerHook();
         GlobalScreen.setEventDispatcher(new SwingDispatchService());
         GlobalScreen.addNativeKeyListener(this);
         GlobalScreen.addNativeMouseMotionListener(this);
         window = new MainWindow(this);
+        window.setStatus(scriptThread.isAlive());
         settings = new SettingsWindow(this);
         clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         this.script = script;
-        Handler handler = new FileHandler("Clicker.txt",true);
-        Handler handler1 = new ConsoleHandler();
-        logger.addHandler(handler1);
-        logger.addHandler(handler);
-        logger.setUseParentHandlers(false);
+        Handler fileHandler = getNewFileHandler();
+        commonLogger.addHandler(new ConsoleHandler());
+        commonLogger.addHandler(fileHandler);
+        commonLogger.setUseParentHandlers(false);
+    }
+
+    private Handler getNewFileHandler() {
+        FileHandler handler = null;
+        try {
+            handler = new FileHandler("Clicker.txt", 1024 * 10_000, 1, true);
+            handler.setFormatter(new Formatter() {
+                @Override
+                public String format(LogRecord record) {
+                    DateFormat DATE_FORMAT = new SimpleDateFormat("[HH:mm:ss]");
+                    return String.format(
+                            "%s: %s", DATE_FORMAT.format(System.currentTimeMillis()),
+                            record.getMessage()) + "\n";
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return handler;
     }
 
     static void registerHook() {
@@ -92,8 +113,12 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     public synchronized void drag(int oldX, int oldY, int newX, int newY, int steps) {
         try {
             robot.mouseMove(oldX, oldY);
+            robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+            robot.mouseMove(oldX + 1, oldY);
             script.wait(DRUG_DELAY);
             robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            script.wait(DRUG_DELAY);
             if (steps == 0) steps = 1;
             int xDiff = (newX - oldX) / steps;
             int yDiff = (newY - oldY) / steps;
@@ -103,7 +128,7 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
             }
             robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -112,7 +137,7 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     }
 
     public void putLog(String msg) {
-        logger.warning(msg);
+        commonLogger.info(msg);
     }
 
     @Override
@@ -124,13 +149,17 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
         if (refreshColorData.isAlive()) {
             refreshColorData.interrupt();
         }
+        window.setStatus(scriptThread.isAlive());
     }
 
     @Override
     public void stop() {
         if (scriptThread.isAlive()) {
+            window.setStatus(!scriptThread.isAlive());
             scriptThread.interrupt();
+            window.requestFocus();
         }
+        Telegram.stop();
     }
 
     @Override
@@ -213,7 +242,7 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
 
         @Override
         public void run() {
-            while (true) {
+            while (!refreshColorData.isInterrupted()) {
                 if (System.currentTimeMillis() - lastTimestamp > REFRESH_DELAY && !scriptThread.isAlive()) {
                     setCurrentMousePositionData();
                     window.setColorInfo(x, y, color);

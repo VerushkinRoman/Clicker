@@ -10,6 +10,8 @@ import java.util.ArrayList;
 public class MainWindow extends JFrame implements ActionListener {
     private static final int WINDOW_WIDTH = 300;
     private static final int WINDOW_HEIGHT = 180;
+    private static final int X_LOCATION = 1546;
+    private static final int Y_LOCATION = 214;
 
     private final ClickerWindowListener listener;
 
@@ -40,7 +42,7 @@ public class MainWindow extends JFrame implements ActionListener {
         compound = BorderFactory.createCompoundBorder(raisedBevel, loweredBevel);
 
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-        setLocation(WINDOW_WIDTH, WINDOW_HEIGHT);
+        setLocation(X_LOCATION, Y_LOCATION);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Clicker");
 
@@ -60,6 +62,8 @@ public class MainWindow extends JFrame implements ActionListener {
 
         lblCurrent.setOpaque(true);
         lblSaved.setOpaque(true);
+        btnRun.setOpaque(true);
+        btnStop.setOpaque(true);
         cbAlwaysOnTop.setSelected(true);
 
         btnRun.addActionListener(this);
@@ -122,5 +126,15 @@ public class MainWindow extends JFrame implements ActionListener {
         lblYSavedData.setText(String.valueOf(y));
         lblColorSavedData.setText(String.valueOf(color));
         lblSaved.setBackground(new Color(color));
+    }
+
+    public void setStatus(boolean running) {
+        if (running) {
+            btnRun.setBackground(Color.GREEN);
+            btnStop.setBackground(null);
+        } else {
+            btnRun.setBackground(null);
+            btnStop.setBackground(Color.RED);
+        }
     }
 }

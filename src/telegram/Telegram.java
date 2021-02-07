@@ -10,7 +10,9 @@ public class Telegram implements Runnable {
     private String msg;
     private static String chatID = "0";
     private static String apiToken = "0";
+    private static boolean repeat = true;
     private int delay;
+    private static int countdown;
     private static String urlMask = "https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s";
     private static Thread telegram = new Thread();
 
@@ -29,11 +31,16 @@ public class Telegram implements Runnable {
         Telegram.apiToken = apiToken;
     }
 
+    public static void setRepeat(boolean repeat) {
+        Telegram.repeat = repeat;
+    }
+
     public static void start(String msg, int delay) {
-        while (telegram.isAlive()) {
-            telegram.interrupt();
+        if (telegram.isAlive()) {
+            countdown = 0;
+        } else {
+            new Telegram(msg, delay);
         }
-        new Telegram(msg, delay);
     }
 
     public static void stop() {
@@ -43,12 +50,17 @@ public class Telegram implements Runnable {
     @Override
     public synchronized void run() {
         try {
-            wait(delay);
-            String urlString = String.format(urlMask, apiToken, chatID, msg);
-            URL url = new URL(urlString);
-            URLConnection connection = url.openConnection();
-            new BufferedInputStream(connection.getInputStream());
-        } catch (IOException | InterruptedException ignored) {
+            while (repeat) {
+                for (countdown = 0; countdown < delay; countdown++) {
+                    wait(1000);
+                }
+                String urlString = String.format(urlMask, apiToken, chatID, msg);
+                URL url = new URL(urlString);
+                URLConnection connection = url.openConnection();
+                new BufferedInputStream(connection.getInputStream());
+            }
+        } catch (IOException | InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 }
