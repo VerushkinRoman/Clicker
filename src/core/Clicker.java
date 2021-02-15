@@ -24,30 +24,35 @@ import java.util.logging.*;
 public class Clicker implements ClickerWindowListener, NativeKeyListener, NativeMouseMotionListener {
 
     private static final int REFRESH_DELAY = 300;
-    private static final int DRUG_DELAY = 150;
+    private static final int DRAG_DELAY = 150;
+    private static final int DRAG_STEPS = 10;
     private static final Logger commonLogger = Logger.getLogger(Clicker.class.getName());
     private final MainWindow window;
+    private final Settings settings;
     private final ScriptForClicker script;
     private final Clipboard clipboard;
-    private final SettingsWindow settings;
+    private final SettingsWindow settingsWindow;
     private final Robot robot;
+    private final Telegram telegram;
+    private Thread telegramThread;
     private Thread scriptThread;
     private Thread refreshColorData;
-    private StringSelection stringSelection;
     private NativeMouseEvent mouseCoordinates;
-    private int x = 100;
-    private int y = 100;
+    private int x;
+    private int y;
     private int color;
-    private int keySave = 88;
-    private int keyStart = 67;
-    private int keyStop = 68;
     private long lastTimestamp = System.currentTimeMillis();
     private boolean isChangeStartBtn = false;
     private boolean isChangeStopBtn = false;
+    private final String start = "start";
+    private final String end = "stop";
 
-    public Clicker(ScriptForClicker script) throws AWTException {
+    public Clicker(ScriptForClicker script, String... options) throws AWTException {
+        this.script = script;
         scriptThread = new Thread((Runnable) script);
         refreshColorData = new Thread(new RefreshColorData());
+        telegram = new Telegram();
+        telegramThread = new Thread(telegram);
         robot = new Robot();
         Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
         logger.setLevel(Level.OFF);
@@ -56,13 +61,21 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
         GlobalScreen.setEventDispatcher(new SwingDispatchService());
         GlobalScreen.addNativeKeyListener(this);
         GlobalScreen.addNativeMouseMotionListener(this);
-        window = new MainWindow(this);
+        window = new MainWindow(this, options);
+        if (options.length > 0) script.optionSelected(options[0]);
         window.setStatus(scriptThread.isAlive());
-        settings = new SettingsWindow(this);
+        settings = new Settings();
+        settingsWindow = new SettingsWindow(this);
+        settingsWindow.setNewButton(start, settings.getKeyStart());
+        settingsWindow.setNewButton(end, settings.getKeyStop());
+        window.setAlwaysOnTop(settings.isAlwaysOnTop());
         clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        this.script = script;
         Handler fileHandler = getNewFileHandler();
-        commonLogger.addHandler(new ConsoleHandler());
+        fileHandler.setLevel(Level.INFO);
+        ConsoleHandler consoleHandler = new ConsoleHandler();
+        consoleHandler.setLevel(Level.FINE);
+        commonLogger.setLevel(Level.FINE);
+        commonLogger.addHandler(consoleHandler);
         commonLogger.addHandler(fileHandler);
         commonLogger.setUseParentHandlers(false);
     }
@@ -86,7 +99,7 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
         return handler;
     }
 
-    static void registerHook() {
+    private static void registerHook() {
         try {
             GlobalScreen.registerNativeHook();
         } catch (NativeHookException ex) {
@@ -96,7 +109,7 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
         }
     }
 
-    static void unregisterHook() {
+    private static void unregisterHook() {
         try {
             GlobalScreen.unregisterNativeHook();
         } catch (NativeHookException e) {
@@ -105,26 +118,54 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     }
 
     public void click(int x, int y) {
+        doClick(x, y);
+    }
+
+    public void click(Point point) {
+        doClick(point.x, point.y);
+    }
+
+    private void doClick(int x, int y) {
         robot.mouseMove(x, y);
         robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
         robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
     }
 
-    public synchronized void drag(int oldX, int oldY, int newX, int newY, int steps) {
+    public void drag(int oldX, int oldY, int newX, int newY, int steps, int delay) {
+        dragObject(oldX, oldY, newX, newY, steps, delay);
+    }
+
+    public void drag(int oldX, int oldY, int newX, int newY, int steps) {
+        dragObject(oldX, oldY, newX, newY, steps, DRAG_DELAY);
+    }
+
+    public void drag(int oldX, int oldY, int newX, int newY) {
+        dragObject(oldX, oldY, newX, newY, DRAG_STEPS, DRAG_DELAY);
+    }
+
+    public void drag(Point start, Point end, int steps, int delay) {
+        dragObject(start.x, start.y, end.x, end.y, steps, delay);
+    }
+
+    public void drag(Point start, Point end, int steps) {
+        dragObject(start.x, start.y, end.x, end.y, steps, DRAG_DELAY);
+    }
+
+    public void drag(Point start, Point end) {
+        dragObject(start.x, start.y, end.x, end.y, DRAG_STEPS, DRAG_DELAY);
+    }
+
+    private synchronized void dragObject(int oldX, int oldY, int newX, int newY, int steps, int delay) {
         try {
             robot.mouseMove(oldX, oldY);
             robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-            robot.mouseMove(oldX + 1, oldY);
-            script.wait(DRUG_DELAY);
-            robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-            script.wait(DRUG_DELAY);
+            script.wait(delay);
             if (steps == 0) steps = 1;
             int xDiff = (newX - oldX) / steps;
             int yDiff = (newY - oldY) / steps;
             for (int i = 1; i <= steps; i++) {
                 robot.mouseMove(oldX + xDiff * i, oldY + yDiff * i);
-                script.wait(DRUG_DELAY);
+                script.wait(delay);
             }
             robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
         } catch (InterruptedException e) {
@@ -138,6 +179,22 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
 
     public void putLog(String msg) {
         commonLogger.info(msg);
+    }
+
+    public void startTelegram(String msg, int delay, boolean repeat) {
+        telegram.setMsg(msg);
+        telegram.setDelay(delay);
+        telegram.setRepeat(repeat);
+        if (telegramThread.isAlive()) {
+            telegram.setCountdown(0);
+        } else {
+            telegramThread = new Thread(telegram);
+            telegramThread.start();
+        }
+    }
+
+    public void stopTelegram() {
+        telegramThread.interrupt();
     }
 
     @Override
@@ -154,29 +211,37 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
 
     @Override
     public void stop() {
-        if (scriptThread.isAlive()) {
-            window.setStatus(!scriptThread.isAlive());
-            scriptThread.interrupt();
-            window.requestFocus();
-        }
-        Telegram.stop();
+        scriptThread.interrupt();
+        window.setStatus(false);
+        window.requestFocus();
+        stopTelegram();
     }
 
     @Override
     public void settingsClicked() {
-        settings.setVisible(true);
+        settingsWindow.setVisible(true);
     }
 
     @Override
     public void changeStartBtn() {
         isChangeStartBtn = true;
-        settings.setNewButton("start", "");
+        settingsWindow.setNewButton(start, "");
     }
 
     @Override
     public void changeStopBtn() {
         isChangeStopBtn = true;
-        settings.setNewButton("stop", "");
+        settingsWindow.setNewButton(end, "");
+    }
+
+    @Override
+    public void alwaysOnTop(boolean onTop) {
+        settings.setAlwaysOnTop(onTop);
+    }
+
+    @Override
+    public void optionSelected(String option) {
+        script.optionSelected(option);
     }
 
     @Override
@@ -185,37 +250,43 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     }
 
     @Override
-    public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
-        //don't need
+    public synchronized void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
+        try {
+            lastTimestamp = System.currentTimeMillis();
+            String key = NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode());
+            commonLogger.fine("Key pressed: " + key);
+            if (key.equals(settings.getKeySave())) {
+                setCurrentMousePositionData();
+                window.setSavedData(x, y, color);
+                StringSelection stringSelection = new StringSelection(
+                        "if(clicker.getColor(" + x + ", " + y + ") == " +
+                                color + ") {\n" + "clicker.putLog(\"\");\n" + "}"
+                );
+                clipboard.setContents(stringSelection, stringSelection);
+            } else if (key.equals(settings.getKeyStop())) {
+                stop();
+            } else if (key.equals(settings.getKeyStart())) {
+                start();
+            }
+            if (isChangeStartBtn) {
+                settings.setKeyStart(key);
+                settingsWindow.setNewButton("start", key);
+                isChangeStartBtn = false;
+                wait(1000);
+            } else if (isChangeStopBtn) {
+                settings.setKeyStop(key);
+                settingsWindow.setNewButton("stop", key);
+                isChangeStartBtn = false;
+                wait(1000);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
-        lastTimestamp = System.currentTimeMillis();
-        int key = nativeKeyEvent.getKeyCode();
-        putLog("Key pressed: " + key);
-        if (key == keySave) {
-            setCurrentMousePositionData();
-            window.setSavedData(x, y, color);
-            stringSelection = new StringSelection(
-                    "if(clicker.getColor(" + x + ", " + y + ") == " +
-                            color + ") {\n" + "clicker.putLog(\"\");\n" + "}"
-            );
-            clipboard.setContents(stringSelection, stringSelection);
-        } else if (key == keyStop) {
-            stop();
-        } else if (key == keyStart) {
-            start();
-        }
-        if (isChangeStartBtn) {
-            keyStart = key;
-            settings.setNewButton("start", "OK");
-            isChangeStartBtn = false;
-        } else if (isChangeStopBtn) {
-            keyStop = key;
-            settings.setNewButton("stop", "OK");
-            isChangeStartBtn = false;
-        }
+        //don't need
     }
 
     @Override
@@ -224,12 +295,18 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
         if (!scriptThread.isAlive() && !refreshColorData.isAlive()) {
             refreshColorData = new Thread(new RefreshColorData());
             refreshColorData.start();
+            window.setStatus(scriptThread.isAlive());
         }
     }
 
     @Override
     public void nativeMouseDragged(NativeMouseEvent nativeMouseEvent) {
         //don't need
+    }
+
+    public void setTelegramData(String chatID, String token) {
+        telegram.setChatID(chatID);
+        telegram.setApiToken(token);
     }
 
     private void setCurrentMousePositionData() {

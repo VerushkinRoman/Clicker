@@ -11,4 +11,8 @@ public interface ClickerWindowListener {
     void changeStartBtn();
 
     void changeStopBtn();
+
+    void alwaysOnTop(boolean onTop);
+
+    void optionSelected(String option);
 }

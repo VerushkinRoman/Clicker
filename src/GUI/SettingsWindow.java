@@ -1,5 +1,7 @@
 package GUI;
 
+import org.jnativehook.keyboard.NativeKeyEvent;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -27,6 +29,9 @@ public class SettingsWindow extends JFrame implements ActionListener {
         setLocation(WINDOW_WIDTH, WINDOW_HEIGHT);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setTitle("Settings");
+
+        lblStartBtn.setHorizontalAlignment(SwingConstants.CENTER);
+        lblStopBtn.setHorizontalAlignment(SwingConstants.CENTER);
 
         btnCngStart.addActionListener(this);
         btnCngStop.addActionListener(this);
@@ -62,11 +67,11 @@ public class SettingsWindow extends JFrame implements ActionListener {
         } else throw new RuntimeException("Undefined source: " + src);
     }
 
-    public void setNewButton(String src, String status) {
+    public void setNewButton(String src, String button) {
         if (src.equals("start")) {
-            lblStartBtn.setText(status);
+            lblStartBtn.setText(button);
         } else if (src.equals("stop")) {
-            lblStopBtn.setText(status);
+            lblStopBtn.setText(button);
         }
     }
 }

@@ -7,44 +7,36 @@ import java.net.URLConnection;
 
 public class Telegram implements Runnable {
 
-    private String msg;
-    private static String chatID = "0";
-    private static String apiToken = "0";
-    private static boolean repeat = true;
-    private int delay;
-    private static int countdown;
-    private static String urlMask = "https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s";
-    private static Thread telegram = new Thread();
+    private final String urlMask = "https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s";
+    private String chatID = "0";
+    private String apiToken = "0";
+    private int delay = 0;
+    private String msg = "";
+    private boolean repeat = false;
+    private int countdown;
 
-    private Telegram(String msg, int delay) {
-        this.msg = msg;
+    public void setDelay(int delay) {
         this.delay = delay;
-        telegram = new Thread(this);
-        telegram.start();
     }
 
-    public static void setChatID(String chatID) {
-        Telegram.chatID = chatID;
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
-    public static void setApiToken(String apiToken) {
-        Telegram.apiToken = apiToken;
+    public void setRepeat(boolean repeat) {
+        this.repeat = repeat;
     }
 
-    public static void setRepeat(boolean repeat) {
-        Telegram.repeat = repeat;
+    public void setCountdown(int countdown) {
+        this.countdown = countdown;
     }
 
-    public static void start(String msg, int delay) {
-        if (telegram.isAlive()) {
-            countdown = 0;
-        } else {
-            new Telegram(msg, delay);
-        }
+    public void setChatID(String chatID) {
+        this.chatID = chatID;
     }
 
-    public static void stop() {
-        telegram.interrupt();
+    public void setApiToken(String apiToken) {
+        this.apiToken = apiToken;
     }
 
     @Override

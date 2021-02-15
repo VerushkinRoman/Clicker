@@ -8,10 +8,13 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class MainWindow extends JFrame implements ActionListener {
-    private static final int WINDOW_WIDTH = 300;
-    private static final int WINDOW_HEIGHT = 180;
-    private static final int X_LOCATION = 1546;
-    private static final int Y_LOCATION = 214;
+
+    private static final int SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
+    private static final int SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
+    private static final int X_LOCATION = SCREEN_WIDTH / 5 * 4;
+    private static final int Y_LOCATION = SCREEN_HEIGHT / 5;
+    private static final int WINDOW_WIDTH = 310;
+    private static final int WINDOW_HEIGHT = 200;
 
     private final ClickerWindowListener listener;
 
@@ -33,8 +36,11 @@ public class MainWindow extends JFrame implements ActionListener {
     private final JButton btnSettings = new JButton("Settings");
     private final JCheckBox cbAlwaysOnTop = new JCheckBox("On top");
     private final Border compound;
+    private JComboBox<String> option;
 
-    public MainWindow(ClickerWindowListener listener) {
+    public MainWindow(ClickerWindowListener listener, String... strings) {
+
+        getRootPane().setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
 
         this.listener = listener;
         Border raisedBevel = BorderFactory.createRaisedBevelBorder();
@@ -45,6 +51,15 @@ public class MainWindow extends JFrame implements ActionListener {
         setLocation(X_LOCATION, Y_LOCATION);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Clicker");
+
+        if (strings.length > 0) {
+            option = new JComboBox<>(strings);
+            option.setSelectedIndex(0);
+            option.setBorder(BorderFactory.createEmptyBorder(3, 0, 0, 0));
+            option.setFocusable(false);
+            option.addActionListener(this);
+            add(option, BorderLayout.CENTER);
+        }
 
         topPanel.setLayout(new GridLayout(0, 3));
         topPanel.add(new JLabel("Data"));
@@ -79,8 +94,8 @@ public class MainWindow extends JFrame implements ActionListener {
         setBorder(this, compound);
         add(btnPanel, BorderLayout.SOUTH);
 
+        pack();
         setResizable(false);
-        setAlwaysOnTop(true);
         setVisible(true);
     }
 
@@ -109,8 +124,11 @@ public class MainWindow extends JFrame implements ActionListener {
             listener.stop();
         } else if (src == cbAlwaysOnTop) {
             setAlwaysOnTop(cbAlwaysOnTop.isSelected());
+            listener.alwaysOnTop(cbAlwaysOnTop.isSelected());
         } else if (src == btnSettings) {
             listener.settingsClicked();
+        } else if (src == option) {
+            listener.optionSelected((String) option.getSelectedItem());
         } else throw new RuntimeException("Undefined source: " + src);
     }
 
