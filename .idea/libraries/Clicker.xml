@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Clicker">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/out/artifacts/Clicker_jar/Clicker.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
