@@ -54,13 +54,6 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
         telegram = new Telegram();
         telegramThread = new Thread(telegram);
         robot = new Robot();
-        Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
-        logger.setLevel(Level.OFF);
-        logger.setUseParentHandlers(false);
-        registerHook();
-        GlobalScreen.setEventDispatcher(new SwingDispatchService());
-        GlobalScreen.addNativeKeyListener(this);
-        GlobalScreen.addNativeMouseMotionListener(this);
         window = new MainWindow(this, options);
         if (options.length > 0) script.optionSelected(options[0]);
         window.setStatus(scriptThread.isAlive());
@@ -69,7 +62,13 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
         settingsWindow.setNewButton(start, settings.getKeyStart());
         settingsWindow.setNewButton(end, settings.getKeyStop());
         window.setAlwaysOnTop(settings.isAlwaysOnTop());
+        waitForMainWindow();
         clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        initLoggers();
+        registerHook();
+    }
+
+    private void initLoggers() {
         Handler fileHandler = getNewFileHandler();
         fileHandler.setLevel(Level.INFO);
         ConsoleHandler consoleHandler = new ConsoleHandler();
@@ -78,6 +77,18 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
         commonLogger.addHandler(consoleHandler);
         commonLogger.addHandler(fileHandler);
         commonLogger.setUseParentHandlers(false);
+        Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
+        logger.setLevel(Level.OFF);
+        logger.setUseParentHandlers(false);
+        GlobalScreen.setEventDispatcher(new SwingDispatchService());
+        GlobalScreen.addNativeKeyListener(this);
+        GlobalScreen.addNativeMouseMotionListener(this);
+    }
+
+    private void waitForMainWindow() {
+        while (!window.isVisible()) {
+            Thread.onSpinWait();
+        }
     }
 
     private Handler getNewFileHandler() {

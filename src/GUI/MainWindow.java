@@ -150,6 +150,7 @@ public class MainWindow extends JFrame implements ActionListener {
         if (running) {
             btnRun.setBackground(Color.GREEN);
             btnStop.setBackground(null);
+            lblCurrent.setBackground(null);
         } else {
             btnRun.setBackground(null);
             btnStop.setBackground(Color.RED);
