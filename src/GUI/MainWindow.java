@@ -13,8 +13,11 @@ public class MainWindow extends JFrame implements ActionListener {
     private static final int SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
     private static final int X_LOCATION = SCREEN_WIDTH / 5 * 4;
     private static final int Y_LOCATION = SCREEN_HEIGHT / 5;
-    private static final int WINDOW_WIDTH = 310;
+    private static final int WINDOW_WIDTH = 300;
     private static final int WINDOW_HEIGHT = 200;
+    private static final String savedText = "Saved";
+    private static final String runText = "Run";
+    private static final String stopText = "Stop";
 
     private final ClickerWindowListener listener;
 
@@ -30,9 +33,9 @@ public class MainWindow extends JFrame implements ActionListener {
     private final JLabel lblColorData = new JLabel();
     private final JLabel lblColorSavedData = new JLabel();
     private final JLabel lblCurrent = new JLabel("Current");
-    private final JLabel lblSaved = new JLabel("Saved");
-    private final JButton btnRun = new JButton("Run");
-    private final JButton btnStop = new JButton("Stop");
+    private final JLabel lblSaved = new JLabel();
+    private final JButton btnRun = new JButton();
+    private final JButton btnStop = new JButton();
     private final JButton btnSettings = new JButton("Settings");
     private final JCheckBox cbAlwaysOnTop = new JCheckBox("On top");
     private final Border compound;
@@ -85,6 +88,7 @@ public class MainWindow extends JFrame implements ActionListener {
         btnStop.addActionListener(this);
         cbAlwaysOnTop.addActionListener(this);
         btnSettings.addActionListener(this);
+        btnPanel.setLayout(new GridLayout(1, 4));
         btnPanel.add(btnRun);
         btnPanel.add(btnStop);
         btnPanel.add(btnSettings);
@@ -151,9 +155,26 @@ public class MainWindow extends JFrame implements ActionListener {
             btnRun.setBackground(Color.GREEN);
             btnStop.setBackground(null);
             lblCurrent.setBackground(null);
+            lblXSavedData.setText("");
+            lblYSavedData.setText("");
+            lblColorSavedData.setText("");
+            lblXData.setText("");
+            lblYData.setText("");
+            lblColorData.setText("");
+            lblSaved.setBackground(null);
         } else {
             btnRun.setBackground(null);
             btnStop.setBackground(Color.RED);
         }
+    }
+
+    public void setKeys(String saveKey, String runKey, String stopKey) {
+        String fontName = lblCurrent.getFont().toString();
+        lblSaved.setFont(new Font(fontName, Font.BOLD, 12 - saveKey.length() / 4));
+        lblSaved.setText(savedText + " (" + saveKey + ")");
+        btnRun.setFont(new Font(fontName, Font.BOLD, 12 - runKey.length() / 4));
+        btnRun.setText(runText + " (" + runKey + ")");
+        btnStop.setFont(new Font(fontName, Font.BOLD, 13 - stopKey.length()));
+        btnStop.setText(stopText + " (" + stopKey + ")");
     }
 }

@@ -45,7 +45,7 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     private boolean isChangeStartBtn = false;
     private boolean isChangeStopBtn = false;
     private final String start = "start";
-    private final String end = "stop";
+    private final String stop = "stop";
 
     public Clicker(ScriptForClicker script, String... options) throws AWTException {
         this.script = script;
@@ -60,8 +60,9 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
         settings = new Settings();
         settingsWindow = new SettingsWindow(this);
         settingsWindow.setNewButton(start, settings.getKeyStart());
-        settingsWindow.setNewButton(end, settings.getKeyStop());
+        settingsWindow.setNewButton(stop, settings.getKeyStop());
         window.setAlwaysOnTop(settings.isAlwaysOnTop());
+        setWindowKeys();
         waitForMainWindow();
         clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         initLoggers();
@@ -242,7 +243,7 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     @Override
     public void changeStopBtn() {
         isChangeStopBtn = true;
-        settingsWindow.setNewButton(end, "");
+        settingsWindow.setNewButton(stop, "");
     }
 
     @Override
@@ -279,16 +280,18 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
             } else if (key.equals(settings.getKeyStart())) {
                 start();
             }
-            if (isChangeStartBtn) {
-                settings.setKeyStart(key);
-                settingsWindow.setNewButton("start", key);
+            if (isChangeStartBtn || isChangeStopBtn) {
+                if (isChangeStartBtn) {
+                    settings.setKeyStart(key);
+                    settingsWindow.setNewButton("start", key);
+                } else {
+                    settings.setKeyStop(key);
+                    settingsWindow.setNewButton("stop", key);
+                }
+                setWindowKeys();
                 isChangeStartBtn = false;
-                wait(1000);
-            } else if (isChangeStopBtn) {
-                settings.setKeyStop(key);
-                settingsWindow.setNewButton("stop", key);
-                isChangeStartBtn = false;
-                wait(1000);
+                isChangeStopBtn = false;
+                wait(500);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -324,6 +327,10 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
         x = mouseCoordinates.getX();
         y = mouseCoordinates.getY();
         color = robot.getPixelColor(x, y).getRGB();
+    }
+
+    private void setWindowKeys() {
+        window.setKeys(settings.getKeySave(), settings.getKeyStart(), settings.getKeyStop());
     }
 
     private class RefreshColorData implements Runnable {
