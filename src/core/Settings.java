@@ -96,21 +96,13 @@ class Settings {
         return config.get(keyStartPrefix);
     }
 
-    public String getKeyStop() {
-        return config.get(keyStopPrefix);
-    }
-
-    public String getKeySave() {
-        return config.get(keySavePrefix);
-    }
-
-    public boolean isAlwaysOnTop() {
-        return Boolean.parseBoolean(config.get(alwaysOnTopPrefix));
-    }
-
     public void setKeyStart(String key) {
         replaceString(keyStartPrefix + config.get(keyStartPrefix), keyStartPrefix + key);
         config.put(keyStartPrefix, key);
+    }
+
+    public String getKeyStop() {
+        return config.get(keyStopPrefix);
     }
 
     public void setKeyStop(String key) {
@@ -118,14 +110,21 @@ class Settings {
         config.put(keyStopPrefix, key);
     }
 
+    public String getKeySave() {
+        return config.get(keySavePrefix);
+    }
+
     public void setKeySave(String key) {
         replaceString(keySavePrefix + config.get(keySavePrefix), keySavePrefix + key);
         config.put(keySavePrefix, key);
+    }
+
+    public boolean isAlwaysOnTop() {
+        return Boolean.parseBoolean(config.get(alwaysOnTopPrefix));
     }
 
     public void setAlwaysOnTop(boolean onTop) {
         replaceString(alwaysOnTopPrefix + config.get(alwaysOnTopPrefix), alwaysOnTopPrefix + onTop);
         config.put(alwaysOnTopPrefix, String.valueOf(onTop));
     }
-
 }

@@ -34,6 +34,8 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     private final SettingsWindow settingsWindow;
     private final Robot robot;
     private final Telegram telegram;
+    private final String start = "start";
+    private final String stop = "stop";
     private Thread telegramThread;
     private Thread scriptThread;
     private Thread refreshColorData;
@@ -44,8 +46,6 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     private long lastTimestamp = System.currentTimeMillis();
     private boolean isChangeStartBtn = false;
     private boolean isChangeStopBtn = false;
-    private final String start = "start";
-    private final String stop = "stop";
 
     public Clicker(ScriptForClicker script, String... options) throws AWTException {
         this.script = script;
@@ -67,6 +67,24 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
         clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         initLoggers();
         registerHook();
+    }
+
+    private static void registerHook() {
+        try {
+            GlobalScreen.registerNativeHook();
+        } catch (NativeHookException ex) {
+            System.err.println("There was a problem registering the native hook.");
+            System.err.println(ex.getMessage());
+            System.exit(1);
+        }
+    }
+
+    private static void unregisterHook() {
+        try {
+            GlobalScreen.unregisterNativeHook();
+        } catch (NativeHookException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initLoggers() {
@@ -109,24 +127,6 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
             e.printStackTrace();
         }
         return handler;
-    }
-
-    private static void registerHook() {
-        try {
-            GlobalScreen.registerNativeHook();
-        } catch (NativeHookException ex) {
-            System.err.println("There was a problem registering the native hook.");
-            System.err.println(ex.getMessage());
-            System.exit(1);
-        }
-    }
-
-    private static void unregisterHook() {
-        try {
-            GlobalScreen.unregisterNativeHook();
-        } catch (NativeHookException e) {
-            e.printStackTrace();
-        }
     }
 
     public void click(int x, int y) {

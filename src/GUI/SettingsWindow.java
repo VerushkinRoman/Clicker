@@ -1,7 +1,5 @@
 package GUI;
 
-import org.jnativehook.keyboard.NativeKeyEvent;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

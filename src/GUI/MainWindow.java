@@ -15,6 +15,8 @@ public class MainWindow extends JFrame implements ActionListener {
     private static final int Y_LOCATION = SCREEN_HEIGHT / 5;
     private static final int WINDOW_WIDTH = 300;
     private static final int WINDOW_HEIGHT = 200;
+    private static final int DEFAULT_TEXT_SIZE = SCREEN_HEIGHT / 90;
+    private static final int PADDING = 5;
     private static final String savedText = "Saved";
     private static final String runText = "Run";
     private static final String stopText = "Stop";
@@ -38,31 +40,24 @@ public class MainWindow extends JFrame implements ActionListener {
     private final JButton btnStop = new JButton();
     private final JButton btnSettings = new JButton("Settings");
     private final JCheckBox cbAlwaysOnTop = new JCheckBox("On top");
-    private final Border compound;
+    private final String defaultFontName = lblX.getFont().toString();
+    private final Font defaultFont = new Font(defaultFontName, Font.BOLD, DEFAULT_TEXT_SIZE);
+    private final Insets defaultInsets = new Insets(0, 0, 0, 0);
     private JComboBox<String> option;
 
     public MainWindow(ClickerWindowListener listener, String... strings) {
 
-        getRootPane().setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
+        getRootPane().setBorder(BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING));
 
         this.listener = listener;
         Border raisedBevel = BorderFactory.createRaisedBevelBorder();
         Border loweredBevel = BorderFactory.createLoweredBevelBorder();
-        compound = BorderFactory.createCompoundBorder(raisedBevel, loweredBevel);
+        Border compound = BorderFactory.createCompoundBorder(raisedBevel, loweredBevel);
 
-        setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
         setLocation(X_LOCATION, Y_LOCATION);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Clicker");
-
-        if (strings.length > 0) {
-            option = new JComboBox<>(strings);
-            option.setSelectedIndex(0);
-            option.setBorder(BorderFactory.createEmptyBorder(3, 0, 0, 0));
-            option.setFocusable(false);
-            option.addActionListener(this);
-            add(option, BorderLayout.CENTER);
-        }
 
         topPanel.setLayout(new GridLayout(0, 3));
         topPanel.add(new JLabel("Data"));
@@ -88,14 +83,34 @@ public class MainWindow extends JFrame implements ActionListener {
         btnStop.addActionListener(this);
         cbAlwaysOnTop.addActionListener(this);
         btnSettings.addActionListener(this);
+
+        btnRun.setFont(defaultFont);
+        btnStop.setFont(defaultFont);
+        cbAlwaysOnTop.setFont(defaultFont);
+        btnSettings.setFont(defaultFont);
+
+        btnRun.setMargin(defaultInsets);
+        btnStop.setMargin(defaultInsets);
+        btnSettings.setMargin(defaultInsets);
+
         btnPanel.setLayout(new GridLayout(1, 4));
         btnPanel.add(btnRun);
         btnPanel.add(btnStop);
         btnPanel.add(btnSettings);
         btnPanel.add(cbAlwaysOnTop);
 
+        setBorder(topPanel, compound);
+
         add(topPanel, BorderLayout.NORTH);
-        setBorder(this, compound);
+        if (strings.length > 0) {
+            option = new JComboBox<>(strings);
+            option.setSelectedIndex(0);
+            option.setBorder(BorderFactory.createEmptyBorder(PADDING, 0, PADDING, 0));
+            option.setFont(defaultFont);
+            option.setFocusable(false);
+            option.addActionListener(this);
+            add(option, BorderLayout.CENTER);
+        }
         add(btnPanel, BorderLayout.SOUTH);
 
         pack();
@@ -113,6 +128,7 @@ public class MainWindow extends JFrame implements ActionListener {
                 if (comp instanceof JLabel) {
                     ((JLabel) comp).setHorizontalAlignment(SwingConstants.CENTER);
                     ((JLabel) comp).setBorder(border);
+                    comp.setFont(defaultFont);
                 }
             }
         }
@@ -169,12 +185,22 @@ public class MainWindow extends JFrame implements ActionListener {
     }
 
     public void setKeys(String saveKey, String runKey, String stopKey) {
-        String fontName = lblCurrent.getFont().toString();
-        lblSaved.setFont(new Font(fontName, Font.BOLD, 12 - saveKey.length() / 4));
-        lblSaved.setText(savedText + " (" + saveKey + ")");
-        btnRun.setFont(new Font(fontName, Font.BOLD, 12 - runKey.length() / 4));
-        btnRun.setText(runText + " (" + runKey + ")");
-        btnStop.setFont(new Font(fontName, Font.BOLD, 13 - stopKey.length()));
-        btnStop.setText(stopText + " (" + stopKey + ")");
+        String lblSavedText = savedText + " (" + saveKey + ")";
+        String btnRunText = runText + " (" + runKey + ")";
+        String btnStopText = stopText + " (" + stopKey + ")";
+
+        lblSaved.setFont(new Font(defaultFontName, Font.BOLD, getFontSize(lblSaved, lblSavedText)));
+        lblSaved.setText(lblSavedText);
+        btnRun.setFont(new Font(defaultFontName, Font.BOLD, getFontSize(btnRun, btnRunText)));
+        btnRun.setText(btnRunText);
+        btnStop.setFont(new Font(defaultFontName, Font.BOLD, getFontSize(btnStop, btnStopText)));
+        btnStop.setText(btnStopText);
+    }
+
+    private int getFontSize(Component component, String text) {
+        int stringWidth = component.getFontMetrics(defaultFont).stringWidth(text);
+        int componentWidth = component.getWidth();
+        double widthRatio = (double) (componentWidth - 10) / (double) stringWidth;
+        return (widthRatio < 1) ? (int) (defaultFont.getSize() * widthRatio) : defaultFont.getSize();
     }
 }
