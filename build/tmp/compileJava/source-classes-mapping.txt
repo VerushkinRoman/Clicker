@@ -1,0 +1,20 @@
+org/clicker/posse/core/ScriptForClicker.java
+ org.clicker.posse.core.ScriptForClicker
+org/clicker/posse/core/Clicker.java
+ org.clicker.posse.core.Clicker
+ org.clicker.posse.core.Clicker$1
+ org.clicker.posse.core.Clicker$RefreshColorData
+org/clicker/posse/GUI/ClickerWindowListener.java
+ org.clicker.posse.GUI.ClickerWindowListener
+org/clicker/posse/GUI/SettingsWindow.java
+ org.clicker.posse.GUI.SettingsWindow
+org/clicker/posse/example/ClickerDemo.java
+ org.clicker.posse.example.ClickerDemo
+org/clicker/posse/telegram/Telegram.java
+ org.clicker.posse.telegram.Telegram
+org/clicker/posse/GUI/MainWindow.java
+ org.clicker.posse.GUI.MainWindow
+org/clicker/posse/core/Settings.java
+ org.clicker.posse.core.Settings
+ org.clicker.posse.core.Settings$1
+ org.clicker.posse.core.Settings$2
