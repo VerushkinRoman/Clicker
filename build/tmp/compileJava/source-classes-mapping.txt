@@ -1,20 +1,20 @@
-org/clicker/posse/core/ScriptForClicker.java
- org.clicker.posse.core.ScriptForClicker
-org/clicker/posse/core/Clicker.java
- org.clicker.posse.core.Clicker
- org.clicker.posse.core.Clicker$1
- org.clicker.posse.core.Clicker$RefreshColorData
-org/clicker/posse/GUI/ClickerWindowListener.java
- org.clicker.posse.GUI.ClickerWindowListener
-org/clicker/posse/GUI/SettingsWindow.java
- org.clicker.posse.GUI.SettingsWindow
-org/clicker/posse/example/ClickerDemo.java
- org.clicker.posse.example.ClickerDemo
-org/clicker/posse/telegram/Telegram.java
- org.clicker.posse.telegram.Telegram
-org/clicker/posse/GUI/MainWindow.java
- org.clicker.posse.GUI.MainWindow
-org/clicker/posse/core/Settings.java
- org.clicker.posse.core.Settings
- org.clicker.posse.core.Settings$1
- org.clicker.posse.core.Settings$2
+xyz/posse/clicker/core/Settings.java
+ xyz.posse.clicker.core.Settings
+ xyz.posse.clicker.core.Settings$1
+ xyz.posse.clicker.core.Settings$2
+xyz/posse/clicker/example/ClickerDemo.java
+ xyz.posse.clicker.example.ClickerDemo
+xyz/posse/clicker/GUI/ClickerWindowListener.java
+ xyz.posse.clicker.GUI.ClickerWindowListener
+xyz/posse/clicker/GUI/MainWindow.java
+ xyz.posse.clicker.GUI.MainWindow
+xyz/posse/clicker/core/ScriptForClicker.java
+ xyz.posse.clicker.core.ScriptForClicker
+xyz/posse/clicker/core/Clicker.java
+ xyz.posse.clicker.core.Clicker
+ xyz.posse.clicker.core.Clicker$1
+ xyz.posse.clicker.core.Clicker$RefreshColorData
+xyz/posse/clicker/telegram/Telegram.java
+ xyz.posse.clicker.telegram.Telegram
+xyz/posse/clicker/GUI/SettingsWindow.java
+ xyz.posse.clicker.GUI.SettingsWindow

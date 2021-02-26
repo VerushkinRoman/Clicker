@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group 'org.org.clicker.posse.example'
+group 'org.xyz.posse.clicker.example'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -23,7 +23,7 @@ test {
 jar {
     manifest {
         attributes('Class-Path': configurations.compile.files.collect { "$it.name" }.join(' '),
-                'Main-Class': 'org.clicker.posse.example.ClickerDemo')
+                'Main-Class': 'xyz.posse.clicker.example.ClickerDemo')
     }
 
     from {

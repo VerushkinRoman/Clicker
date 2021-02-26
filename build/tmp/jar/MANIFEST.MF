@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
 Class-Path: 
-Main-Class: org.clicker.posse.example.ClickerDemo
+Main-Class: xyz.posse.clicker.example.ClickerDemo
 
