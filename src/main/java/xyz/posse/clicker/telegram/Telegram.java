@@ -5,14 +5,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class Telegram implements Runnable {
+public class Telegram extends Thread {
 
     private final String urlMask = "https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s";
     private String chatID = "0";
     private String apiToken = "0";
     private int delay = 0;
     private String msg = "";
-    private boolean repeat = false;
+    private boolean repeat;
     private int countdown;
 
     public void setDelay(int delay) {
@@ -41,8 +41,9 @@ public class Telegram implements Runnable {
 
     @Override
     public synchronized void run() {
-        try {
-            while (repeat) {
+
+        while (repeat && !Thread.currentThread().isInterrupted()) {
+            try {
                 for (countdown = 0; countdown < delay; countdown++) {
                     wait(1000);
                 }
@@ -50,9 +51,9 @@ public class Telegram implements Runnable {
                 URL url = new URL(urlString);
                 URLConnection connection = url.openConnection();
                 new BufferedInputStream(connection.getInputStream());
+            } catch (IOException | InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
-        } catch (IOException | InterruptedException e) {
-            Thread.currentThread().interrupt();
         }
     }
 }

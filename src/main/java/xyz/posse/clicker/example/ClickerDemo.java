@@ -38,16 +38,17 @@ public class ClickerDemo extends Thread implements ScriptForClicker {
 
     @Override
     public synchronized void run() {
-        try {
-            while (!interrupted()) {
+
+        while (!Thread.currentThread().isInterrupted()) {
+            try {
                 if (option.equals(option1)) {
                     dragSomething();
                 } else if (option.equals(option2) || option.equals(option3)) {
                     clicking();
                 }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
         }
     }
 
@@ -70,16 +71,16 @@ public class ClickerDemo extends Thread implements ScriptForClicker {
             clicker.putLog("if white at 300x300 then drag from 200x200 to 500x500");
             clicker.drag(200, 200, 500, 500, 5, 100);
             wait(5000);
-            clicker.startTelegram(msg, 20, true); //Start (restart) org.clicker.posse.telegram message with delay 20 seconds.
+            clicker.startTelegram(msg, 20, true); //Start (restart) telegram message with delay 20 seconds.
         }
 
         if (clicker.getColor(900, 900) == -1) {
-            clicker.putLog("if white at 900x900 then stop org.clicker.posse.telegram message");
+            clicker.putLog("if white at 900x900 then stop telegram message");
             clicker.stopTelegram();
         }
 
         now = LocalTime.now(zoneId);
-        if (!now.isBefore(startTime) && now.isAfter(endTime)) {
+        if (!now.isBefore(startTime) && !now.isAfter(endTime)) {
             clicker.stopTelegram();
         }
     }

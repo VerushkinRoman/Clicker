@@ -1,8 +1,5 @@
 package xyz.posse.clicker.core;
 
-import xyz.posse.clicker.GUI.ClickerWindowListener;
-import xyz.posse.clicker.GUI.MainWindow;
-import xyz.posse.clicker.GUI.SettingsWindow;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.dispatcher.SwingDispatchService;
@@ -10,6 +7,9 @@ import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import org.jnativehook.mouse.NativeMouseEvent;
 import org.jnativehook.mouse.NativeMouseMotionListener;
+import xyz.posse.clicker.GUI.ClickerWindowListener;
+import xyz.posse.clicker.GUI.MainWindow;
+import xyz.posse.clicker.GUI.SettingsWindow;
 import xyz.posse.clicker.telegram.Telegram;
 
 import java.awt.*;
@@ -36,7 +36,6 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     private final Telegram telegram;
     private final String start = "start";
     private final String stop = "stop";
-    private Thread telegramThread;
     private Thread scriptThread;
     private Thread refreshColorData;
     private NativeMouseEvent mouseCoordinates;
@@ -52,7 +51,6 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
         scriptThread = new Thread((Runnable) script);
         refreshColorData = new Thread(new RefreshColorData());
         telegram = new Telegram();
-        telegramThread = new Thread(telegram);
         robot = new Robot();
         window = new MainWindow(this, options);
         if (options.length > 0) script.optionSelected(options[0]);
@@ -197,16 +195,15 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
         telegram.setMsg(msg);
         telegram.setDelay(delay);
         telegram.setRepeat(repeat);
-        if (telegramThread.isAlive()) {
+        if (telegram.isAlive()) {
             telegram.setCountdown(0);
         } else {
-            telegramThread = new Thread(telegram);
-            telegramThread.start();
+            telegram.start();
         }
     }
 
     public void stopTelegram() {
-        telegramThread.interrupt();
+        telegram.interrupt();
     }
 
     @Override
