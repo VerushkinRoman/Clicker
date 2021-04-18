@@ -14,7 +14,7 @@ public class MainWindow extends JFrame implements ActionListener {
     private static final int X_LOCATION = SCREEN_WIDTH / 5 * 4;
     private static final int Y_LOCATION = SCREEN_HEIGHT / 5;
     private static final int WINDOW_WIDTH = 300;
-    private static final int WINDOW_HEIGHT = 200;
+    private static final int WINDOW_HEIGHT = 260;
     private static final int DEFAULT_TEXT_SIZE = SCREEN_HEIGHT / 90;
     private static final int PADDING = 5;
     private static final String savedText = "Saved";
@@ -24,6 +24,7 @@ public class MainWindow extends JFrame implements ActionListener {
     private final ClickerWindowListener listener;
 
     private final JPanel btnPanel = new JPanel();
+    private final JPanel additionButtonsPanel = new JPanel();
     private final JPanel topPanel = new JPanel();
     private final JLabel lblX = new JLabel("X");
     private final JLabel lblXData = new JLabel();
@@ -39,11 +40,13 @@ public class MainWindow extends JFrame implements ActionListener {
     private final JButton btnRun = new JButton();
     private final JButton btnStop = new JButton();
     private final JButton btnSettings = new JButton("Settings");
+    private final JButton btnOpenLog = new JButton("LOG");
     private final JCheckBox cbAlwaysOnTop = new JCheckBox("On top");
     private final String defaultFontName = lblX.getFont().toString();
     private final Font defaultFont = new Font(defaultFontName, Font.BOLD, DEFAULT_TEXT_SIZE);
     private final Insets defaultInsets = new Insets(0, 0, 0, 0);
     private JComboBox<String> option;
+    private Color lastUsedColor = new Color(0);
 
     public MainWindow(ClickerWindowListener listener, String... strings) {
 
@@ -83,6 +86,7 @@ public class MainWindow extends JFrame implements ActionListener {
         btnStop.addActionListener(this);
         cbAlwaysOnTop.addActionListener(this);
         btnSettings.addActionListener(this);
+        btnOpenLog.addActionListener(this);
 
         btnRun.setFont(defaultFont);
         btnStop.setFont(defaultFont);
@@ -93,11 +97,15 @@ public class MainWindow extends JFrame implements ActionListener {
         btnStop.setMargin(defaultInsets);
         btnSettings.setMargin(defaultInsets);
 
-        btnPanel.setLayout(new GridLayout(1, 4));
+        additionButtonsPanel.setLayout(new GridLayout(3, 1));
+        additionButtonsPanel.add(btnSettings);
+        additionButtonsPanel.add(cbAlwaysOnTop);
+        additionButtonsPanel.add(btnOpenLog);
+
+        btnPanel.setLayout(new GridLayout(1, 3));
         btnPanel.add(btnRun);
         btnPanel.add(btnStop);
-        btnPanel.add(btnSettings);
-        btnPanel.add(cbAlwaysOnTop);
+        btnPanel.add(additionButtonsPanel);
 
         setBorder(topPanel, compound);
 
@@ -149,21 +157,26 @@ public class MainWindow extends JFrame implements ActionListener {
             listener.settingsClicked();
         } else if (src == option) {
             listener.optionSelected((String) option.getSelectedItem());
+        } else if (src == btnOpenLog) {
+            listener.logPressed();
         } else throw new RuntimeException("Undefined source: " + src);
     }
 
-    public void setColorInfo(int x, int y, int color) {
+    public void setColorInfo(int x, int y, Color color) {
         lblXData.setText(String.valueOf(x));
         lblYData.setText(String.valueOf(y));
-        lblColorData.setText(String.valueOf(color));
-        lblCurrent.setBackground(new Color(color));
+        if (!lastUsedColor.equals(color)) {
+            lblColorData.setText(String.valueOf(color.getRGB()));
+            lblCurrent.setBackground(color);
+            lastUsedColor = color;
+        }
     }
 
-    public void setSavedData(int x, int y, int color) {
+    public void setSavedData(int x, int y, Color color) {
         lblXSavedData.setText(String.valueOf(x));
         lblYSavedData.setText(String.valueOf(y));
-        lblColorSavedData.setText(String.valueOf(color));
-        lblSaved.setBackground(new Color(color));
+        lblColorSavedData.setText(String.valueOf(color.getRGB()));
+        lblSaved.setBackground(color);
     }
 
     public void setStatus(boolean running) {

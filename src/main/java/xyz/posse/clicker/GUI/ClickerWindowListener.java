@@ -15,4 +15,6 @@ public interface ClickerWindowListener {
     void alwaysOnTop(boolean onTop);
 
     void optionSelected(String option);
+
+    void logPressed();
 }

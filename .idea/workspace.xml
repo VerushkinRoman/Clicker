@@ -5,27 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5531bbe9-6f69-4d5f-8041-c755408ee56a" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/6.7/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.7/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/6.7/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.7/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/6.7/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.7/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/6.7/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.7/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/6.7/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.7/javaCompile/classAnalysis.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/6.7/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.7/javaCompile/javaCompile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/6.7/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.7/javaCompile/taskHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/core/Clicker$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/core/Clicker$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/core/Clicker$RefreshColorData.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/core/Clicker$RefreshColorData.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/GUI/ClickerWindowListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/GUI/ClickerWindowListener.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/GUI/MainWindow.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/GUI/MainWindow.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/core/Clicker$RefreshColorData.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/core/Clicker.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/core/Clicker.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/example/ClickerDemo.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/example/ClickerDemo.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/telegram/Telegram.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/telegram/Telegram.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/libs/Clicker-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/build/libs/Clicker-1.0-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/libs/Clicker.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/libs/config.cfg" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/source-classes-mapping.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/source-classes-mapping.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/xyz/posse/clicker/GUI/ClickerWindowListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/xyz/posse/clicker/GUI/ClickerWindowListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/xyz/posse/clicker/GUI/MainWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/xyz/posse/clicker/GUI/MainWindow.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/xyz/posse/clicker/core/Clicker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/xyz/posse/clicker/core/Clicker.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/xyz/posse/clicker/example/ClickerDemo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/xyz/posse/clicker/example/ClickerDemo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/xyz/posse/clicker/telegram/Telegram.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/xyz/posse/clicker/telegram/Telegram.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,11 +87,11 @@
   </component>
   <component name="RunManager" selected="Gradle.Clicker [build]">
     <configuration name="ClickerDemo" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="org.clicker.posse.example.ClickerDemo" />
-      <module name="org.posse.clicker.example.Clicker.main" />
+      <option name="MAIN_CLASS_NAME" value="xyz.posse.clicker.example.ClickerDemo" />
+      <module name="org.xyz.posse.clicker.example.Clicker.main" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.clicker.posse.example.*" />
+          <option name="PATTERN" value="xyz.posse.clicker.example.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -121,52 +120,8 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="Clicker [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="clean" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
-    </configuration>
-    <configuration name="Clicker [jar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="jar" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.Clicker [jar]" />
-        <item itemvalue="Gradle.Clicker [clean]" />
         <item itemvalue="Gradle.Clicker [build]" />
         <item itemvalue="Application.ClickerDemo" />
       </list>

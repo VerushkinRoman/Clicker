@@ -16,6 +16,7 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.InputEvent;
+import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -23,7 +24,7 @@ import java.util.logging.*;
 
 public class Clicker implements ClickerWindowListener, NativeKeyListener, NativeMouseMotionListener {
 
-    private static final int REFRESH_DELAY = 300;
+    private static final int REFRESH_DELAY = 1;
     private static final int DRAG_DELAY = 150;
     private static final int DRAG_STEPS = 10;
     private static final Logger commonLogger = Logger.getLogger(Clicker.class.getName());
@@ -33,15 +34,14 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     private final Clipboard clipboard;
     private final SettingsWindow settingsWindow;
     private final Robot robot;
-    private final Telegram telegram;
+    private Telegram telegram;
     private final String start = "start";
     private final String stop = "stop";
     private Thread scriptThread;
-    private Thread refreshColorData;
     private NativeMouseEvent mouseCoordinates;
     private int x;
     private int y;
-    private int color;
+    private Color color;
     private long lastTimestamp = System.currentTimeMillis();
     private boolean isChangeStartBtn = false;
     private boolean isChangeStopBtn = false;
@@ -49,7 +49,6 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     public Clicker(ScriptForClicker script, String... options) throws AWTException {
         this.script = script;
         scriptThread = new Thread((Runnable) script);
-        refreshColorData = new Thread(new RefreshColorData());
         telegram = new Telegram();
         robot = new Robot();
         window = new MainWindow(this, options);
@@ -111,7 +110,8 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     private Handler getNewFileHandler() {
         FileHandler handler = null;
         try {
-            handler = new FileHandler("Clicker.txt", 1024 * 10_000, 1, true);
+            handler = new FileHandler("Clicker.txt", 1024 * 100, 1, true);
+            handler.setEncoding("UTF-8");
             handler.setFormatter(new Formatter() {
                 @Override
                 public String format(LogRecord record) {
@@ -192,14 +192,17 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     }
 
     public void startTelegram(String msg, int delay, boolean repeat) {
+        if (!telegram.isAlive()) {
+            telegram.interrupt();
+            telegram = new Telegram();
+            telegram.setName("Telegram");
+            telegram.start();
+        } else {
+            telegram.setCountdown(0);
+        }
         telegram.setMsg(msg);
         telegram.setDelay(delay);
         telegram.setRepeat(repeat);
-        if (telegram.isAlive()) {
-            telegram.setCountdown(0);
-        } else {
-            telegram.start();
-        }
     }
 
     public void stopTelegram() {
@@ -209,11 +212,10 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     @Override
     public void start() {
         if (!scriptThread.isAlive()) {
+            scriptThread.interrupt();
             scriptThread = new Thread((Runnable) script);
+            scriptThread.setName("Clicker");
             scriptThread.start();
-        }
-        if (refreshColorData.isAlive()) {
-            refreshColorData.interrupt();
         }
         window.setStatus(scriptThread.isAlive());
     }
@@ -254,6 +256,16 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     }
 
     @Override
+    public void logPressed() {
+        try {
+            File file = new File("Clicker.txt");
+            Desktop.getDesktop().open(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
         //don't need
     }
@@ -261,7 +273,6 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     @Override
     public synchronized void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
         try {
-            lastTimestamp = System.currentTimeMillis();
             String key = NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode());
             commonLogger.fine("Key pressed: " + key);
             if (key.equals(settings.getKeySave())) {
@@ -303,10 +314,12 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     @Override
     public void nativeMouseMoved(NativeMouseEvent nativeMouseEvent) {
         mouseCoordinates = nativeMouseEvent;
-        if (!scriptThread.isAlive() && !refreshColorData.isAlive()) {
-            refreshColorData = new Thread(new RefreshColorData());
-            refreshColorData.start();
-            window.setStatus(scriptThread.isAlive());
+        if (!scriptThread.isAlive()) {
+            if (System.currentTimeMillis() - lastTimestamp > REFRESH_DELAY && !scriptThread.isAlive()) {
+                setCurrentMousePositionData();
+                window.setColorInfo(x, y, color);
+                lastTimestamp = System.currentTimeMillis();
+            }
         }
     }
 
@@ -323,24 +336,10 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     private void setCurrentMousePositionData() {
         x = mouseCoordinates.getX();
         y = mouseCoordinates.getY();
-        color = robot.getPixelColor(x, y).getRGB();
+        color = robot.getPixelColor(x, y);
     }
 
     private void setWindowKeys() {
         window.setKeys(settings.getKeySave(), settings.getKeyStart(), settings.getKeyStop());
-    }
-
-    private class RefreshColorData implements Runnable {
-
-        @Override
-        public void run() {
-            while (!refreshColorData.isInterrupted()) {
-                if (System.currentTimeMillis() - lastTimestamp > REFRESH_DELAY && !scriptThread.isAlive()) {
-                    setCurrentMousePositionData();
-                    window.setColorInfo(x, y, color);
-                    lastTimestamp = System.currentTimeMillis();
-                }
-            }
-        }
     }
 }
