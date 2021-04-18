@@ -7,9 +7,9 @@ import java.net.URLConnection;
 
 public class Telegram extends Thread {
 
-    private final String urlMask = "https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s";
-    private String chatID = "0";
-    private String apiToken = "0";
+    private static final String urlMask = "https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s";
+    private static String chatID = "0";
+    private static String apiToken = "0";
     private int delay = 0;
     private String msg = "";
     private boolean repeat;
@@ -32,11 +32,11 @@ public class Telegram extends Thread {
     }
 
     public void setChatID(String chatID) {
-        this.chatID = chatID;
+        Telegram.chatID = chatID;
     }
 
     public void setApiToken(String apiToken) {
-        this.apiToken = apiToken;
+        Telegram.apiToken = apiToken;
     }
 
     @Override
