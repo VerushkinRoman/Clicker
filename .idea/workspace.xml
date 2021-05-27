@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5531bbe9-6f69-4d5f-8041-c755408ee56a" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries-with-intellij-classes.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/6.7/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.7/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/6.7/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.7/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/6.7/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.7/fileHashes/fileHashes.bin" afterDir="false" />
@@ -12,10 +13,19 @@
       <change beforePath="$PROJECT_DIR$/.gradle/6.7/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.7/javaCompile/classAnalysis.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/6.7/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.7/javaCompile/javaCompile.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/sha1-checksums.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/GUI/ClickerWindowListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/GUI/ClickerWindowListener.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/GUI/MainWindow.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/GUI/MainWindow.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/core/Clicker$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/core/Clicker$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/core/Clicker.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/core/Clicker.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/telegram/Telegram.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/xyz/posse/clicker/telegram/Telegram.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/libs/Clicker-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/build/libs/Clicker-1.0-SNAPSHOT.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/source-classes-mapping.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/source-classes-mapping.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/xyz/posse/clicker/GUI/ClickerWindowListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/xyz/posse/clicker/GUI/ClickerWindowListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/xyz/posse/clicker/GUI/MainWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/xyz/posse/clicker/GUI/MainWindow.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/xyz/posse/clicker/core/Clicker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/xyz/posse/clicker/core/Clicker.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/xyz/posse/clicker/telegram/Telegram.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/xyz/posse/clicker/telegram/Telegram.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -61,6 +71,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/main/java/xyz/posse/clicker/core/Clicker.java" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectId" id="1oyW69ViOve6ngB6LcVBmbUFWh8" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -135,7 +148,21 @@
       <option name="project" value="LOCAL" />
       <updated>1614323379458</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Telegram fix">
+      <created>1618763433078</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1618763433078</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Telegram fix">
+      <created>1618763464813</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1618763464813</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -152,7 +179,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Migrate to Gradle" />
-    <option name="LAST_COMMIT_MESSAGE" value="Migrate to Gradle" />
+    <MESSAGE value="Telegram fix" />
+    <option name="LAST_COMMIT_MESSAGE" value="Telegram fix" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

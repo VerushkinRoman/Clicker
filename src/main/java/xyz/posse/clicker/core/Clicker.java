@@ -16,13 +16,16 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.InputEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.*;
 
-public class Clicker implements ClickerWindowListener, NativeKeyListener, NativeMouseMotionListener {
+public class Clicker extends Robot implements ClickerWindowListener, NativeKeyListener, NativeMouseMotionListener {
 
     private static final int REFRESH_DELAY = 1;
     private static final int DRAG_DELAY = 150;
@@ -33,24 +36,26 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     private final ScriptForClicker script;
     private final Clipboard clipboard;
     private final SettingsWindow settingsWindow;
-    private final Robot robot;
-    private Telegram telegram;
     private final String start = "start";
     private final String stop = "stop";
+    private final Map<Integer, Color> colors = new HashMap<>();
+    private Telegram telegram;
     private Thread scriptThread;
     private NativeMouseEvent mouseCoordinates;
     private int x;
     private int y;
     private Color color;
     private long lastTimestamp = System.currentTimeMillis();
-    private boolean isChangeStartBtn = false;
-    private boolean isChangeStopBtn = false;
+    private boolean isChangeStartBtn;
+    private boolean isChangeStopBtn;
+    private boolean isEditorActive;
+    private String telegramChatID;
+    private String telegramToken;
 
     public Clicker(ScriptForClicker script, String... options) throws AWTException {
         this.script = script;
         scriptThread = new Thread((Runnable) script);
         telegram = new Telegram();
-        robot = new Robot();
         window = new MainWindow(this, options);
         if (options.length > 0) script.optionSelected(options[0]);
         window.setStatus(scriptThread.isAlive());
@@ -136,9 +141,9 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     }
 
     private void doClick(int x, int y) {
-        robot.mouseMove(x, y);
-        robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-        robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+        mouseMove(x, y);
+        mousePress(InputEvent.BUTTON1_DOWN_MASK);
+        mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
     }
 
     public void drag(int oldX, int oldY, int newX, int newY, int steps, int delay) {
@@ -167,24 +172,26 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
 
     private synchronized void dragObject(int oldX, int oldY, int newX, int newY, int steps, int delay) {
         try {
-            robot.mouseMove(oldX, oldY);
-            robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            mouseMove(oldX, oldY);
+            mousePress(InputEvent.BUTTON1_DOWN_MASK);
             script.wait(delay);
             if (steps == 0) steps = 1;
             int xDiff = (newX - oldX) / steps;
             int yDiff = (newY - oldY) / steps;
             for (int i = 1; i <= steps; i++) {
-                robot.mouseMove(oldX + xDiff * i, oldY + yDiff * i);
+                mouseMove(oldX + xDiff * i, oldY + yDiff * i);
                 script.wait(delay);
             }
-            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+            mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
     }
 
     public int getColor(int x, int y) {
-        return robot.getPixelColor(x, y).getRGB();
+        Rectangle rect = new Rectangle(x, y, 1, 1);
+        BufferedImage capture = createScreenCapture(rect);
+        return capture.getRGB(0, 0);
     }
 
     public void putLog(String msg) {
@@ -193,8 +200,9 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
 
     public void startTelegram(String msg, int delay, boolean repeat) {
         if (!telegram.isAlive()) {
-            telegram.interrupt();
             telegram = new Telegram();
+            telegram.setChatID(telegramChatID);
+            telegram.setApiToken(telegramToken);
             telegram.setName("Telegram");
             telegram.start();
         } else {
@@ -212,7 +220,6 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     @Override
     public void start() {
         if (!scriptThread.isAlive()) {
-            scriptThread.interrupt();
             scriptThread = new Thread((Runnable) script);
             scriptThread.setName("Clicker");
             scriptThread.start();
@@ -266,6 +273,11 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     }
 
     @Override
+    public void editorPressed(boolean editorPressed) {
+        isEditorActive = editorPressed;
+    }
+
+    @Override
     public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
         //don't need
     }
@@ -280,7 +292,7 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
                 window.setSavedData(x, y, color);
                 StringSelection stringSelection = new StringSelection(
                         "if(clicker.getColor(" + x + ", " + y + ") == " +
-                                color + ") {\n" + "clicker.putLog(\"\");\n" + "}"
+                                color.getRGB() + ") {\n" + "clicker.putLog(\"\");\n" + "}"
                 );
                 clipboard.setContents(stringSelection, stringSelection);
             } else if (key.equals(settings.getKeyStop())) {
@@ -314,8 +326,8 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     @Override
     public void nativeMouseMoved(NativeMouseEvent nativeMouseEvent) {
         mouseCoordinates = nativeMouseEvent;
-        if (!scriptThread.isAlive()) {
-            if (System.currentTimeMillis() - lastTimestamp > REFRESH_DELAY && !scriptThread.isAlive()) {
+        if (isEditorActive) {
+            if (System.currentTimeMillis() - lastTimestamp > REFRESH_DELAY) {
                 setCurrentMousePositionData();
                 window.setColorInfo(x, y, color);
                 lastTimestamp = System.currentTimeMillis();
@@ -329,14 +341,23 @@ public class Clicker implements ClickerWindowListener, NativeKeyListener, Native
     }
 
     public void setTelegramData(String chatID, String token) {
-        telegram.setChatID(chatID);
-        telegram.setApiToken(token);
+        telegramChatID = chatID;
+        telegramToken = token;
     }
 
     private void setCurrentMousePositionData() {
         x = mouseCoordinates.getX();
         y = mouseCoordinates.getY();
-        color = robot.getPixelColor(x, y);
+        color = getPixelColor(x, y);
+    }
+
+    @Override
+    public Color getPixelColor(int x, int y) {
+        Rectangle rect = new Rectangle(x, y, 1, 1);
+        BufferedImage capture = createScreenCapture(rect);
+        int colorIndex = capture.getRGB(0, 0);
+        if (!colors.containsKey(colorIndex)) colors.put(colorIndex, new Color(colorIndex));
+        return colors.get(colorIndex);
     }
 
     private void setWindowKeys() {

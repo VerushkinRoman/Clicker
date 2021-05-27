@@ -5,6 +5,7 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 
 public class MainWindow extends JFrame implements ActionListener {
@@ -14,7 +15,6 @@ public class MainWindow extends JFrame implements ActionListener {
     private static final int X_LOCATION = SCREEN_WIDTH / 5 * 4;
     private static final int Y_LOCATION = SCREEN_HEIGHT / 5;
     private static final int WINDOW_WIDTH = 300;
-    private static final int WINDOW_HEIGHT = 260;
     private static final int DEFAULT_TEXT_SIZE = SCREEN_HEIGHT / 90;
     private static final int PADDING = 5;
     private static final String savedText = "Saved";
@@ -24,7 +24,8 @@ public class MainWindow extends JFrame implements ActionListener {
     private final ClickerWindowListener listener;
 
     private final JPanel btnPanel = new JPanel();
-    private final JPanel additionButtonsPanel = new JPanel();
+    private final JPanel settingsEditorButtonsPanel = new JPanel();
+    private final JPanel onTopLogButtonsPanel = new JPanel();
     private final JPanel topPanel = new JPanel();
     private final JLabel lblX = new JLabel("X");
     private final JLabel lblXData = new JLabel();
@@ -41,12 +42,14 @@ public class MainWindow extends JFrame implements ActionListener {
     private final JButton btnStop = new JButton();
     private final JButton btnSettings = new JButton("Settings");
     private final JButton btnOpenLog = new JButton("LOG");
+    private final JToggleButton btnEditor = new JToggleButton("Editor");
     private final JCheckBox cbAlwaysOnTop = new JCheckBox("On top");
     private final String defaultFontName = lblX.getFont().toString();
     private final Font defaultFont = new Font(defaultFontName, Font.BOLD, DEFAULT_TEXT_SIZE);
     private final Insets defaultInsets = new Insets(0, 0, 0, 0);
     private JComboBox<String> option;
     private Color lastUsedColor = new Color(0);
+    private int windowHeight = 130;
 
     public MainWindow(ClickerWindowListener listener, String... strings) {
 
@@ -57,7 +60,7 @@ public class MainWindow extends JFrame implements ActionListener {
         Border loweredBevel = BorderFactory.createLoweredBevelBorder();
         Border compound = BorderFactory.createCompoundBorder(raisedBevel, loweredBevel);
 
-        setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
+        setPreferredSize(new Dimension(WINDOW_WIDTH, windowHeight));
         setLocation(X_LOCATION, Y_LOCATION);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Clicker");
@@ -87,6 +90,18 @@ public class MainWindow extends JFrame implements ActionListener {
         cbAlwaysOnTop.addActionListener(this);
         btnSettings.addActionListener(this);
         btnOpenLog.addActionListener(this);
+        btnEditor.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                add(topPanel, BorderLayout.NORTH);
+                windowHeight = 227;
+            } else if (e.getStateChange() == ItemEvent.DESELECTED) {
+                remove(topPanel);
+                windowHeight = 130;
+            }
+            setPreferredSize(new Dimension(WINDOW_WIDTH, windowHeight));
+            pack();
+            listener.editorPressed(e.getStateChange() == ItemEvent.SELECTED);
+        });
 
         btnRun.setFont(defaultFont);
         btnStop.setFont(defaultFont);
@@ -97,19 +112,22 @@ public class MainWindow extends JFrame implements ActionListener {
         btnStop.setMargin(defaultInsets);
         btnSettings.setMargin(defaultInsets);
 
-        additionButtonsPanel.setLayout(new GridLayout(3, 1));
-        additionButtonsPanel.add(btnSettings);
-        additionButtonsPanel.add(cbAlwaysOnTop);
-        additionButtonsPanel.add(btnOpenLog);
+        settingsEditorButtonsPanel.setLayout(new GridLayout(2, 1));
+        settingsEditorButtonsPanel.add(btnSettings);
+        settingsEditorButtonsPanel.add(btnEditor);
 
-        btnPanel.setLayout(new GridLayout(1, 3));
+        onTopLogButtonsPanel.setLayout(new GridLayout(2, 1));
+        onTopLogButtonsPanel.add(cbAlwaysOnTop);
+        onTopLogButtonsPanel.add(btnOpenLog);
+
+        btnPanel.setLayout(new GridLayout(1, 4));
         btnPanel.add(btnRun);
         btnPanel.add(btnStop);
-        btnPanel.add(additionButtonsPanel);
+        btnPanel.add(settingsEditorButtonsPanel);
+        btnPanel.add(onTopLogButtonsPanel);
 
         setBorder(topPanel, compound);
 
-        add(topPanel, BorderLayout.NORTH);
         if (strings.length > 0) {
             option = new JComboBox<>(strings);
             option.setSelectedIndex(0);
@@ -163,38 +181,44 @@ public class MainWindow extends JFrame implements ActionListener {
     }
 
     public void setColorInfo(int x, int y, Color color) {
-        lblXData.setText(String.valueOf(x));
-        lblYData.setText(String.valueOf(y));
-        if (!lastUsedColor.equals(color)) {
-            lblColorData.setText(String.valueOf(color.getRGB()));
-            lblCurrent.setBackground(color);
-            lastUsedColor = color;
-        }
+        SwingUtilities.invokeLater(() -> {
+            lblXData.setText(String.valueOf(x));
+            lblYData.setText(String.valueOf(y));
+            if (!lastUsedColor.equals(color)) {
+                lblColorData.setText(String.valueOf(color.getRGB()));
+                lblCurrent.setBackground(color);
+                lastUsedColor = color;
+            }
+        });
     }
 
     public void setSavedData(int x, int y, Color color) {
-        lblXSavedData.setText(String.valueOf(x));
-        lblYSavedData.setText(String.valueOf(y));
-        lblColorSavedData.setText(String.valueOf(color.getRGB()));
-        lblSaved.setBackground(color);
+        SwingUtilities.invokeLater(() -> {
+            lblXSavedData.setText(String.valueOf(x));
+            lblYSavedData.setText(String.valueOf(y));
+            lblColorSavedData.setText(String.valueOf(color.getRGB()));
+            lblSaved.setBackground(color);
+        });
     }
 
     public void setStatus(boolean running) {
-        if (running) {
-            btnRun.setBackground(Color.GREEN);
-            btnStop.setBackground(null);
-            lblCurrent.setBackground(null);
-            lblXSavedData.setText("");
-            lblYSavedData.setText("");
-            lblColorSavedData.setText("");
-            lblXData.setText("");
-            lblYData.setText("");
-            lblColorData.setText("");
-            lblSaved.setBackground(null);
-        } else {
-            btnRun.setBackground(null);
-            btnStop.setBackground(Color.RED);
-        }
+        SwingUtilities.invokeLater(() -> {
+            if (running) {
+                btnRun.setBackground(Color.GREEN);
+                btnStop.setBackground(null);
+                lblCurrent.setBackground(null);
+                lblXSavedData.setText("");
+                lblYSavedData.setText("");
+                lblColorSavedData.setText("");
+                lblXData.setText("");
+                lblYData.setText("");
+                lblColorData.setText("");
+                lblSaved.setBackground(null);
+            } else {
+                btnRun.setBackground(null);
+                btnStop.setBackground(Color.RED);
+            }
+        });
     }
 
     public void setKeys(String saveKey, String runKey, String stopKey) {
@@ -202,12 +226,14 @@ public class MainWindow extends JFrame implements ActionListener {
         String btnRunText = runText + " (" + runKey + ")";
         String btnStopText = stopText + " (" + stopKey + ")";
 
-        lblSaved.setFont(new Font(defaultFontName, Font.BOLD, getFontSize(lblSaved, lblSavedText)));
-        lblSaved.setText(lblSavedText);
-        btnRun.setFont(new Font(defaultFontName, Font.BOLD, getFontSize(btnRun, btnRunText)));
-        btnRun.setText(btnRunText);
-        btnStop.setFont(new Font(defaultFontName, Font.BOLD, getFontSize(btnStop, btnStopText)));
-        btnStop.setText(btnStopText);
+        SwingUtilities.invokeLater(() -> {
+            lblSaved.setFont(new Font(defaultFontName, Font.BOLD, getFontSize(lblSaved, lblSavedText)));
+            lblSaved.setText(lblSavedText);
+            btnRun.setFont(new Font(defaultFontName, Font.BOLD, getFontSize(btnRun, btnRunText)));
+            btnRun.setText(btnRunText);
+            btnStop.setFont(new Font(defaultFontName, Font.BOLD, getFontSize(btnStop, btnStopText)));
+            btnStop.setText(btnStopText);
+        });
     }
 
     private int getFontSize(Component component, String text) {

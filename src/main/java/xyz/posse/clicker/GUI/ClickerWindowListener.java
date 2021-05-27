@@ -17,4 +17,6 @@ public interface ClickerWindowListener {
     void optionSelected(String option);
 
     void logPressed();
+
+    void editorPressed(boolean editorPressed);
 }
