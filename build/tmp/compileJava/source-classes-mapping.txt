@@ -2,18 +2,18 @@ xyz/posse/clicker/core/Settings.java
  xyz.posse.clicker.core.Settings
  xyz.posse.clicker.core.Settings$1
  xyz.posse.clicker.core.Settings$2
-xyz/posse/clicker/example/ClickerDemo.java
- xyz.posse.clicker.example.ClickerDemo
+xyz/posse/clicker/telegram/Telegram.java
+ xyz.posse.clicker.telegram.Telegram
+xyz/posse/clicker/core/ScriptForClicker.java
+ xyz.posse.clicker.core.ScriptForClicker
+xyz/posse/clicker/GUI/SettingsWindow.java
+ xyz.posse.clicker.GUI.SettingsWindow
 xyz/posse/clicker/GUI/ClickerWindowListener.java
  xyz.posse.clicker.GUI.ClickerWindowListener
 xyz/posse/clicker/GUI/MainWindow.java
  xyz.posse.clicker.GUI.MainWindow
-xyz/posse/clicker/core/ScriptForClicker.java
- xyz.posse.clicker.core.ScriptForClicker
+xyz/posse/clicker/example/ClickerDemo.java
+ xyz.posse.clicker.example.ClickerDemo
 xyz/posse/clicker/core/Clicker.java
  xyz.posse.clicker.core.Clicker
  xyz.posse.clicker.core.Clicker$1
-xyz/posse/clicker/telegram/Telegram.java
- xyz.posse.clicker.telegram.Telegram
-xyz/posse/clicker/GUI/SettingsWindow.java
- xyz.posse.clicker.GUI.SettingsWindow
